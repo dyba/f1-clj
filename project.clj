@@ -1,6 +1,6 @@
 (defproject com.danieldyba/fellowship-one "0.0.1"
   :description "An API wrapper for Fellowship One"
-  :url "https://github.com/dyba/f1-clj"
+  :url "https://github.com/dyba/fellowship-one"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
