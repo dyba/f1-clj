@@ -1,8 +1,8 @@
-(ns f1-clj.batches
+(ns com.danieldyba.fellowship-one.batches
   (:require [clj-http.client :as client]
-            [f1-clj.utils.keyword :as k]
-            [f1-clj.utils.string :as s]
-            [f1-clj.utils.http :refer [api-action]]))
+            [com.danieldyba.fellowship-one.utils.keyword :as k]
+            [com.danieldyba.fellowship-one.utils.string :as s]
+            [com.danieldyba.fellowship-one.utils.http :refer [api-action]]))
 
 (defn new-batch
   "Returns the template for a new batch."

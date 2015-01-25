@@ -1,4 +1,4 @@
-(ns f1-clj.xml.elements
+(ns com.danieldyba.fellowship-one.xml.elements
   (:require [clj-time.format :as f]
             [clj-time.core :as t]
             [clojure.xml :as xml]

@@ -1,8 +1,8 @@
-(ns f1-clj.people-attributes
+(ns com.danieldyba.fellowship-one.people-attributes
   (:require [clj-http.client :as client]
-            [f1-clj.utils.keyword :as k]
-            [f1-clj.utils.string :as s]
-            [f1-clj.utils.http :refer [api-action]]))
+            [com.danieldyba.fellowship-one.utils.keyword :as k]
+            [com.danieldyba.fellowship-one.utils.string :as s]
+            [com.danieldyba.fellowship-one.utils.http :refer [api-action]]))
 
 (defn show-person-attribute
   "Expects the id of a person and the id of the attribute. Returns a single attribute for the

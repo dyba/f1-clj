@@ -1,6 +1,6 @@
-(ns f1-clj.account-types
+(ns com.danieldyba.fellowship-one.account-types
   (:require [clj-http.client :as client]
-            [f1-clj.utils.http :refer [api-action]]))
+            [com.danieldyba.fellowship-one.utils.http :refer [api-action]]))
 
 (defn list-types
   "Returns a list of account types."

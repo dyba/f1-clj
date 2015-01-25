@@ -1,6 +1,6 @@
-(ns f1-clj.utils.keyword
+(ns com.danieldyba.fellowship-one.utils.keyword
   (:require [clojure.string :as str]
-            [f1-clj.utils.string :as s]))
+            [com.danieldyba.fellowship-one.utils.string :as s]))
 
 (defn keyword->str [k]
   (str/replace (str k) ":" ""))

@@ -1,6 +1,6 @@
-(ns f1-clj.funds
+(ns com.danieldyba.fellowship-one.funds
   (:require [clj-http.client :as client]
-            [f1-clj.utils.http :refer [api-action]]))
+            [com.danieldyba.fellowship-one.utils.http :refer [api-action]]))
 
 (defn list-funds []
   (api-action :GET "/giving/v1/funds" {:accept :xml}))

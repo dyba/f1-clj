@@ -1,6 +1,6 @@
-(ns f1-clj.contribution-types
+(ns com.danieldyba.fellowship-one.contribution-types
   (:require [clj-http.client :as client]
-            [f1-clj.utils.http :refer [api-action]]))
+            [com.danieldyba.fellowship-one.utils.http :refer [api-action]]))
 
 (defn list-types
   "Return a list of contribution types."

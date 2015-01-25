@@ -1,4 +1,4 @@
-(ns f1-clj.core
+(ns com.danieldyba.fellowship-one.core
   (:require [clj-http.client :as client]
             [oauth.client :as oauth]
             [oauth.signature :as sig]

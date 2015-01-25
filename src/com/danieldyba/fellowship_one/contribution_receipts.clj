@@ -1,11 +1,12 @@
-(ns f1-clj.contribution-receipts
+(ns com.danieldyba.fellowship-one.contribution-receipts
   (:require [clj-http.client :as client]
             [clojure.zip :as zip]
+            [clojure.data.xml :as xml]
             [clojure.data.zip.xml :as zx]
             [clojure.string :as str]
-            [f1-clj.utils.keyword :as k]
-            [f1-clj.utils.string :as s]
-            [f1-clj.utils.http :refer [api-action]]))
+            [com.danieldyba.fellowship-one.utils.keyword :as k]
+            [com.danieldyba.fellowship-one.utils.string :as s]
+            [com.danieldyba.fellowship-one.utils.http :refer [api-action]]))
 
 (defn new-receipt
   "Returns the template for a new receipt."

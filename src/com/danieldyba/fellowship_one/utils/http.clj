@@ -1,8 +1,8 @@
-(ns f1-clj.utils.http
+(ns com.danieldyba.fellowship-one.utils.http
   (:require [oauth.client :as oauth]
             [clj-http.client :as client]
-            [f1-clj.core :refer :all]
-            [f1-clj.utils.keyword :as k]))
+            [com.danieldyba.fellowship-one.core :refer :all]
+            [com.danieldyba.fellowship-one.utils.keyword :as k]))
 
 (defn api-action [method path & [opts]]
   (when (and *oauth-token* *oauth-token-secret* *oauth-consumer*)
