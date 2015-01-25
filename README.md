@@ -1,4 +1,4 @@
-# f1-clj
+# fellowship-one
 
 Fellowship One API client for Clojure
 
@@ -7,8 +7,6 @@ Fellowship One API client for Clojure
 Download and install [Leiningen](http://leiningen.org/). On a mac, use [Homebrew](http://brew.sh/) to download and install Leiningen.
 
 I recommend that you use an editor that supports checking for closed parentheses. Emacs and the [Paredit](http://emacswiki.org/emacs/ParEdit) plugin are an excellent combination. You'll be making heavy use of the [Paredit Reference Card](http://pub.gajendra.net/src/paredit-refcard.pdf).
-
-There is sensitive information in the code which will need to be stripped out later and stored in environment variables. The user credentials in the code are for a dummy account.
 
 Check out the documentation on FellowshipOne's website to see how to use the API: [http://developer.fellowshipone.com/docs/](http://developer.fellowshipone.com/docs/). You'll need to register for an account if you want to post on the forums.
 
@@ -38,10 +36,10 @@ Start up a REPL session. Here's a sample usage of the code:
 
 ``` clojure
     (ns f1-testdrive.core
-      (:require [f1-clj.core :refer :all]
-                [f1-clj.contribution-receipts :as cr]
-                [f1-clj.contribution-types :as ct]
-                [f1-clj.xml.elements :as xe]))
+      (:require [com.danieldyba.fellowship-one.core :refer :all]
+                [com.danieldyba.fellowship-one.contribution-receipts :as cr]
+                [com.danieldyba.fellowship-one.contribution-types :as ct]
+                [com.danieldyba.fellowship-one.xml.elements :as xe]))
                 
     (def consumer ...)
     (def oauth-token ...)
