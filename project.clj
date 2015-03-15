@@ -1,4 +1,4 @@
-(defproject com.danieldyba/fellowship-one "0.0.2-SNAPSHOT"
+(defproject com.danieldyba/fellowship-one "0.0.2"
   :description "An API wrapper for Fellowship One"
   :url "https://github.com/dyba/fellowship-one"
   :license {:name "Eclipse Public License"
