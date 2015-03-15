@@ -3,6 +3,8 @@
             [clj-time.core :as t]
             [clojure.xml :as xml]
             [clojure.data.zip.xml :as zx]
+            [com.danieldyba.fellowship-one.contribution-types :refer [show-type]]
+            [com.danieldyba.fellowship-one.funds :refer [show-fund]]
             [clojure.zip :as zip]))
 
 (defn to-xml
@@ -20,8 +22,6 @@
           xml/parse
           zip/xml-zip))))
 
-;; contribution receipt
-
 (defn amount [amt]
   {:tag :amount :content [(str amt)]})
 
@@ -32,22 +32,16 @@
     {:tag :receivedDate
      :content [received-date]}))
 
-;; contribution types
+(defn contribution-type
+  [id]
+  (zip/node (xml-root (show-type id))))
 
-(comment
-  (defn contribution-type
-    [id]
-    (zip/node (xml-root (show-contribution-types id)))))
-
-;; funds
-
-(comment
-  (defn fund
-    [id]
-    (let [zipper (xml-root (show-funds id))
-          uri (zx/attr (zx/xml1-> zipper) :uri)
-          id (zx/attr (zx/xml1-> zipper) :id)
-          content (zip/node (zx/xml1-> zipper :name))]
-      {:tag :fund
-       :attrs {:uri uri :id id}
-       :content [content]})))
+(defn fund
+  [id]
+  (let [zipper (xml-root (show-fund id))
+        uri (zx/attr (zx/xml1-> zipper) :uri)
+        id (zx/attr (zx/xml1-> zipper) :id)
+        content (zip/node (zx/xml1-> zipper :name))]
+    {:tag :fund
+     :attrs {:uri uri :id id}
+     :content [content]}))
