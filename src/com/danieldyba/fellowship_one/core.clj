@@ -123,22 +123,6 @@
                                   params)]
     (api-action :GET "/v1/Households/Search" {:accept :xml :query-params normalized-params})))
 
-(defn make-household-template
-  "Creates an XML template for a new household.
-  
-  Expects a map containing keys that correspond to the elements of a household template and values
-  that are the Clojure representation of the XML data that will be substituted for those elements."
-  [attrs]
-  (let [template (-> (new-household) :body .getBytes java.io.ByteArrayInputStream. data-xml/parse)
-        camel-case-keyword #(-> % k/keyword->str s/camel-case keyword)]
-    (reduce (fn [acc entry]
-              (-> (zip/xml-zip acc)
-                  (zx/xml1-> (camel-case-keyword (key entry)))
-                  (zip/replace (val entry))
-                  (zip/root)))
-            template
-            attrs)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; People API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -407,20 +391,6 @@
                                   {}
                                   params)]
     (api-action :GET "/giving/v1/contributionreceipts/search" {:accept :xml :query-params normalized-params})))
-
-(defn make-contribution-receipt-template
-  "Expects a map containing keys that correspond to the elements of a contribution receipt template and values
-   that are the Clojure representation of the XML data that will be substituted for those elements."
-  [attrs]
-  (let [template (-> (new-contribution-receipt) :body .getBytes java.io.ByteArrayInputStream. data-xml/parse)
-        camel-case-keyword #(-> % k/keyword->str s/camel-case keyword)]
-    (reduce (fn [acc entry]
-              (-> (zip/xml-zip acc)
-                  (zx/xml1-> (camel-case-keyword (key entry)))
-                  (zip/replace (val entry))
-                  (zip/root)))
-            template
-            attrs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Batches API
