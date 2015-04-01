@@ -4,10 +4,13 @@
             [oauth.signature :as sig]
             [environ.core :refer [env]]
             [ring.util.codec :refer (base64-encode)]
-            [clojure.data.xml :as xml]
-            [clojure.string :as str]
+            [clojure.data.xml :as data-xml]
+            [clojure.xml :as xml]
             [clojure.data.zip.xml :as zx]
             [clojure.zip :as zip]
+            [clojure.string :as str]
+            [clj-time.format :as f]
+            [clj-time.core :as t]
             [com.danieldyba.fellowship-one.utils.keyword :as k]
             [com.danieldyba.fellowship-one.utils.string :as s]))
 
@@ -126,7 +129,7 @@
   Expects a map containing keys that correspond to the elements of a household template and values
   that are the Clojure representation of the XML data that will be substituted for those elements."
   [attrs]
-  (let [template (-> (new-household) :body .getBytes java.io.ByteArrayInputStream. xml/parse)
+  (let [template (-> (new-household) :body .getBytes java.io.ByteArrayInputStream. data-xml/parse)
         camel-case-keyword #(-> % k/keyword->str s/camel-case keyword)]
     (reduce (fn [acc entry]
               (-> (zip/xml-zip acc)
@@ -409,7 +412,7 @@
   "Expects a map containing keys that correspond to the elements of a contribution receipt template and values
    that are the Clojure representation of the XML data that will be substituted for those elements."
   [attrs]
-  (let [template (-> (new-contribution-receipt) :body .getBytes java.io.ByteArrayInputStream. xml/parse)
+  (let [template (-> (new-contribution-receipt) :body .getBytes java.io.ByteArrayInputStream. data-xml/parse)
         camel-case-keyword #(-> % k/keyword->str s/camel-case keyword)]
     (reduce (fn [acc entry]
               (-> (zip/xml-zip acc)
@@ -519,6 +522,32 @@
                       (str/replace acc (re-pattern (str k)) (str v))) uri ids))
     uri))
 
+(defn- select-request
+  "Matches the action to the corresponding endpoint and makes the API call.
+  Used as a helper for the macro defendpoint."
+  [action uri & opts]
+  `(let [action# ~action
+         uri#    ~uri]
+     (case action#
+       :new    (api-action :GET uri# {:accept :xml})
+       :delete (api-action :DELETE uri#)
+       :list   (api-action :GET uri# {:accept :xml})
+       :show   (api-action :GET uri# {:accept :xml})
+       :edit   (api-action :GET uri# {:accept :xml})
+       :search (api-action :GET uri# {:accept :xml})
+       :update (api-action :PUT uri# {:accept :xml})
+       :create (api-action :POST uri# {:accept :xml}))))
+
+(defn- action-uri-clauses
+  "Accepts a map where the keys are the actions and the values are the uris
+  associated with the corresponding key.
+  Used as a helper for the macro defendpoint."
+  [action-uri-map & opts]
+  (let [actions (keys action-uri-map)
+        uris (vals action-uri-map)]
+    (interleave actions (map (fn [[action uri]]
+                               (select-request action uri)) action-uri-map))))
+
 (defmacro defendpoint
   [nm & action-uris]
   (let [action-uri-map (reduce (fn [acc [k v]]
@@ -527,13 +556,15 @@
        [action# & opts#]
        (let [action-uri-map# ~action-uri-map]
          (case action#
-           :list (api-call {:action action# :uri (compile-uri (action-uri-map# action#)) :opts opts#})
-           :new (api-call {:action action# :uri (action-uri-map# action#) :opts opts#})
-           :delete (api-call {:action action# :uri (compile-uri (action-uri-map# action#) (first opts#))})
-           :show (api-call {:action action# :uri (compile-uri (action-uri-map# action#) (first opts#))})
-           :search (api-call {:action action# :uri (action-uri-map# action#) :params (first opts#)})
-           :create (compile-create action# opts#)
-           action#)))))
+           ~@(action-uri-clauses action-uri-map `opts#)
+           (str "The " action# " action is not supported."))))))
+
+#_(comment :list (api-call {:action action# :uri (compile-uri (action-uri-map# action#)) :opts opts#})
+         :new (api-call {:action action# :uri (action-uri-map# action#) :opts opts#})
+         :delete (api-call {:action action# :uri (compile-uri (action-uri-map# action#) (first opts#))})
+         :show (api-call {:action action# :uri (compile-uri (action-uri-map# action#) (first opts#))})
+         :search (api-call {:action action# :uri (action-uri-map# action#) :params (first opts#)})
+         :create (compile-create action# opts#))
 
 (defendpoint households
   :new "/v1/Households/new"
@@ -597,6 +628,62 @@
   :create "/v1/People/:person-id/Attributes"
   :update "/v1/People/:person-id/Attributes/:attribute-id"
   :delete "/v1/People/:person-id/Attributes/:attribute-id")
+
+(defmacro template
+  [endpoint attrs]
+  `(let [template# (-> (~(k/keyword->sym endpoint) :new) :body .getBytes java.io.ByteArrayInputStream. data-xml/parse)
+         camel-case-keyword# #(-> % k/keyword->str s/camel-case keyword)]
+     (reduce (fn [acc# entry#]
+               (-> (zip/xml-zip acc#)
+                   (zx/xml1-> (camel-case-keyword# (key entry#)))
+                   (zip/replace (val entry#))
+                   (zip/root)))
+             template#
+             ~attrs)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; XML Helper functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn to-xml
+  [node]
+  (with-out-str (xml/emit-element node)))
+
+(defn xml-root
+  "Retrieves the xml data in the body of a response and converts it to a zipper data structure. If the body is empty, returns nil."
+  [response]
+  (let [body (:body response)]
+    (if (not-empty body)
+      (-> body
+          .getBytes
+          java.io.ByteArrayInputStream.
+          xml/parse
+          zip/xml-zip))))
+
+(defn amount [amt]
+  {:tag :amount :content [(str amt)]})
+
+(defn received-date [date]
+  (let [parser        #(f/parse (f/formatters :date-hour-minute-second) %)
+        unparser      #(f/unparse (f/formatters :date-hour-minute-second) %)
+        received-date (unparser (parser date))]
+    {:tag :receivedDate
+     :content [received-date]}))
+
+(defn contribution-type
+  [id]
+  (zip/node (xml-root (contribution-types :show id))))
+
+(defn fund
+  [id]
+  (let [zipper (xml-root (funds :show id)) ;; we don't yet support the show action :/
+        uri (zx/attr (zx/xml1-> zipper) :uri)
+        id (zx/attr (zx/xml1-> zipper) :id)
+        content (zip/node (zx/xml1-> zipper :name))]
+    {:tag :fund
+     :attrs {:uri uri :id id}
+     :content [content]}))
+
 
 (defmacro let-uri
   [[bindings [uri ids]] & body]

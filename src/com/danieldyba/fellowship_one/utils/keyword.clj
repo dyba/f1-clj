@@ -5,6 +5,9 @@
 (defn keyword->str [k]
   (str/replace (str k) ":" ""))
 
+(defn keyword->sym [k]
+  (symbol (keyword->str k)))
+
 (defn camel-case [k]
   (-> k
       keyword->str
