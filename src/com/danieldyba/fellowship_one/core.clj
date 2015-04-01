@@ -93,11 +93,6 @@
 ;; Households API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn new-household
-  "Returns the template for a new household."
-  []
-  (api-action :GET "/v1/Households/new" {:accept :xml}))
-
 (defn create-household
   "Expects an XML payload to send to the server."
   [body]
@@ -362,11 +357,6 @@
 ;; Contribution Receipts API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn new-contribution-receipt
-  "Returns the template for a new receipt."
-  []
-  (api-action :GET "/giving/v1/contributionreceipts/new" {:accept :xml}))
-
 (defn create-contribution-receipt
   "Expects an XML payload to send to the server."
   [body]
@@ -393,58 +383,8 @@
     (api-action :GET "/giving/v1/contributionreceipts/search" {:accept :xml :query-params normalized-params})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Batches API
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn new-batch
-  "Returns the template for a new batch."
-  []
-  (api-action :GET "/giving/v1/batches/new" {:accept :xml}))
-
-(defn edit-batch
-  "Expects the id of a batch. Retrieves the batch in its most recent condition with its
-  latest values."
-  [id]
-  (api-action :GET (str "/giving/v1/batches/" id "/edit") {:accept :xml}))
-
-(defn create-batch
-  "Expects an XML payload to send to the server."
-  [body]
-  (api-action :POST
-              "/giving/v1/batches"
-              {:body body
-               :content-type :xml
-               :accept :xml}))
-
-(defn put-batch
-  "Updates a single batch."
-  [id]
-  (api-action :PUT (str "/giving/v1/batches/" id) {:accept :xml}))
-
-(defn show-batch
-  "Expects the id of a batch. Returns the batch with that id."
-  [id]
-  (api-action :GET (str "/giving/v1/batches" id) {:accept :xml}))
-
-(defn search-batches
-  [params]
-  (let [normalized-params (reduce (fn [acc entry]
-                                    (let [[k v] entry
-                                          param (-> k k/keyword->str s/camel-case keyword)]
-                                      (assoc acc param v)))
-                                  {}
-                                  params)]
-    (api-action :GET "/giving/v1/batches/search" {:accept :xml :query-params normalized-params})))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Experimental
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(def plural-to-singular
-  {"addresses" "address"
-   "people" "person"
-   "attributes" "attribute"
-   "households" "household"})
 
 (defn api-search [args]
   (let [normalized-params (reduce (fn [acc entry]
@@ -454,24 +394,6 @@
                                   {}
                                   (args :params))]
     (api-action :GET (args :uri) {:accept :xml :query-params normalized-params})))
-
-(defmulti api-call (fn [{:keys [action] :as args}]
-                     [action]))
-(defmethod api-call [:edit] [args]
-  (api-action :GET (args :uri) {:accept :xml}))
-(defmethod api-call [:update] [args]
-  (api-action :GET (args :uri) {:accept :xml}))
-(defmethod api-call [:show] [args]
-  (api-action :GET (args :uri) {:accept :xml}))
-(defmethod api-call [:list] [args]
-  (api-action :GET (args :uri) {:accept :xml}))
-(defmethod api-call [:new] [args]
-  (api-action :GET (args :uri) {:accept :xml}))
-(defmethod api-call [:create] [args]
-  (api-action :POST (args :uri) {:content-type :xml :accept :xml :body nil}))
-(defmethod api-call [:search] [args] (api-search args))
-(defmethod api-call [:update] [args]
-  (api-action :PUT (args :uri) {:content-type :xml :accept :xml :body nil}))
 
 (defn- compile-create [action opts]
   (if (number? (first opts))
