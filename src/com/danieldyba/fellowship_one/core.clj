@@ -95,306 +95,6 @@
     "application/vnd.fellowshiponeapi.com.people.people.v2+xml"
     :xml))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; List operations
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn list-person-attributes
-  "Returns a list of attributes for a given person with person-id."
-  [person-id & opts]
-  (api-action :GET
-              (str "/v1/People/" person-id "/Attributes" )
-              {:accept :xml}))
-
-(defn list-person-address
-  "Returns a list of attributes for a given person with person-id."
-  [person-id & opts]
-  (api-action :GET
-              (str "/v1/People/" person-id "/Addresses" )
-              {:accept :xml}))
-
-(defn list-household-address
-  "Returns a list of attributes for a given household with household-id."
-  [household-id & opts]
-  (api-action :GET
-              (str "/v1/Households/" household-id "/Addresses" )
-              {:accept :xml}))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Edit operations
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn edit-person
-  "Expects the id of a person. Returns a single person with that id. Call this before updating
-  a person in order to retrieve the resource in its most recent condition with its latest values."
-  [id & opts]
-  (let [content-type (content-type-from-version (:version opts))]
-    (api-action :GET (str "/v1/People/" id "/Edit") {:accept :xml :content-type content-type})))
-
-(defn edit-person-address
-  "Expects the id of a person and the attribute id. Call this before updating
-  a person's attribute in order to retrieve the resource in its most recent
-  condition with its latest values."
-  [person-id address-id & opts]
-  (api-action :GET
-              (str "/v1/People/" person-id "/Addresses/" address-id "/edit")
-              {:accept :xml}))
-
-(defn edit-household-address
-  "Expects the id of a household and the attribute id. Call this before updating
-  a household's attribute in order to retrieve the resource in its most recent
-  condition with its latest values."
-  [household-id address-id & opts]
-  (api-action :GET
-              (str "/v1/Households/" household-id "/Addresses/" address-id "/edit")
-              {:accept :xml}))
-
-(defn edit-person-attribute
-  "Expects the id of a person and the attribute id. Call this before updating
-  a person's attribute in order to retrieve the resource in its most recent
-  condition with its latest values."
-  [person-id attribute-id & opts]
-  (api-action :GET
-              (str "/v1/People/" person-id "/Attributes/" attribute-id "/Edit")
-              {:accept :xml}))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; New operations
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn new-person
-  "Returns the template for a new person."
-  [& opts]
-  (let [content-type (content-type-from-version (:version opts))]
-    (api-action :GET "/v1/People/New" {:accept :xml :content-type content-type})))
-
-(defn new-person-attribute
-  "Returns the template for a new person attribute."
-  [person-id & opts]
-  (api-action :GET
-              (str "/v1/People/" person-id "/Attributes/new")
-              {:accept :xml}))
-
-(defn new-household-address
-  "Returns the template for a new household attribute."
-  [household-id & opts]
-  (api-action :GET
-              (str "/v1/Households/" household-id "/Addresses/new")
-              {:accept :xml}))
-
-(defn new-person-address
-  "Returns the template for a new person attribute."
-  [person-id & opts]
-  (api-action :GET
-              (str "/v1/People/" person-id "/Addresses/new")
-              {:accept :xml}))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Update operations
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn update-person-attribute
-  "Expects the id of a person. Updates a single person's attribute."
-  [person-id attribute-id & opts]
-  (api-action :PUT
-              (str "/v1/People/" person-id "/Attributes/" attribute-id)
-              {:accept :xml}))
-
-
-(defn update-household-address
-  "Expects the id of a household. Updates a single household's attribute."
-  [household-id address-id & opts]
-  (api-action :PUT
-              (str "/v1/Households/" household-id "/Addresses/" address-id)
-              {:accept :xml}))
-
-(defn update-person-address
-  "Expects the id of a person. Updates a single person's attribute."
-  [person-id address-id & opts]
-  (api-action :PUT
-              (str "/v1/People/" person-id "/Addresses/" address-id)
-              {:accept :xml}))
-
-(defn update-person
-  "Expects the id of a person. Updates a single person."
-  [id & opts]
-  (let [content-type (content-type-from-version (:version opts))]
-    (api-action :PUT (str "/v1/People/" id) {:accept :xml :content-type content-type})))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Create operations
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn create-person-attribute
-  "Expects an XML payload to send to the server."
-  [person-id body & opts]
-  (api-action :POST
-              (str "/v1/People/" person-id "/Attributes")
-              {:body body
-               :accept :xml}))
-
-(defn create-person
-  "Expects an XML payload to send to the server."
-  [body & opts]
-  (let [content-type (content-type-from-version (:version opts))]
-    (api-action :POST
-                "/v1/People"
-                {:body body
-                 :content-type content-type
-                 :accept :xml})))
-
-(defn create-household
-  "Expects an XML payload to send to the server."
-  [body]
-  (api-action :POST
-              "/v1/Households"
-              {:body body
-               :content-type :xml
-               :accept :xml}))
-
-(defn create-person-address
-  "Expects an XML payload to send to the server."
-  [person-id body & opts]
-  (api-action :POST
-              (str "/v1/People/" person-id "/Addresses")
-              {:body body
-               :accept :xml}))
-
-(defn create-household-address
-  "Expects an XML payload to send to the server."
-  [household-id body & opts]
-  (api-action :POST
-              (str "/v1/Households/" household-id "/Addresses")
-              {:body body
-               :accept :xml}))
-
-(defn create-contribution-receipt
-  "Expects an XML payload to send to the server."
-  [body]
-  (api-action :POST
-              "/giving/v1/contributionreceipts"
-              {:body body
-               :content-type :xml
-               :accept :xml}))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Show operations
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn show-person
-  "Expects the id of a person. Returns a single person with that id."
-  [id & opts]
-  (let [content-type (content-type-from-version (:version opts))]
-    (api-action :GET (str "/v1/People/" id) {:accept :xml :content-type content-type})))
-
-(defn show-contribution-receipt
-  "Expects the id of a receipt. Returns the receipt with that id."
-  [id]
-  (api-action :GET (str "/giving/v1/contributionreceipts/" id) {:accept :xml}))
-
-(defn show-household-address
-  "Expects the id of a household and the id of the attribute. Returns a single attribute for the
-  household with household-id."
-  [household-id address-id & opts]
-  (api-action :GET
-              (str "/v1/Households/" household-id "/Addresses/" address-id)
-              {:accept :xml}))
-
-(defn show-person-address
-  "Expects the id of a person and the id of the attribute. Returns a single attribute for the
-  person with person-id."
-  [person-id address-id & opts]
-  (api-action :GET
-              (str "/v1/People/" person-id "/Addresses/" address-id)
-              {:accept :xml}))
-
-(defn show-household
-  "Expects the id of a household. Returns the household with that id."
-  [id]
-  (api-action :GET (str "/v1/Households/" id) {:accept :xml}))
-
-(defn show-person-attribute
-  "Expects the id of a person and the id of the attribute. Returns a single attribute for the
-  person with person-id."
-  [person-id attribute-id & opts]
-  (api-action :GET
-              (str "/v1/People/" person-id "/Attributes/" attribute-id)
-              {:accept :xml}))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Search operations
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn search-households
-  "Expects a map containing the request parameters with spear-cased keywords. Returns a list of households."
-  [params]
-  (let [normalized-params (reduce (fn [acc entry]
-                                    (let [[k v] entry
-                                          param (-> k k/keyword->str s/camel-case keyword)]
-                                      (assoc acc param v)))
-                                  {}
-                                  params)]
-    (api-action :GET "/v1/Households/Search" {:accept :xml :query-params normalized-params})))
-
-(defn search-contribution-receipts
-  "Expects a map containing the request parameters with spear-cased keywords. Returns a list of contribution receipts."
-  [params]
-  (let [normalized-params (reduce (fn [acc entry]
-                                    (let [[k v] entry
-                                          param (-> k k/keyword->str s/camel-case keyword)]
-                                      (assoc acc param v)))
-                                  {}
-                                  params)]
-    (api-action :GET "/giving/v1/contributionreceipts/search" {:accept :xml :query-params normalized-params})))
-
-(defn search-people
-  "Expects a map containing the request parameters with spear-cased keywords. Returns a collection of people
-  for the parameters provided."
-  [params & [opts]]
-  (let [normalized-params (reduce (fn [acc entry]
-                                    (let [[k v] entry
-                                          param (-> k k/keyword->str s/camel-case keyword)]
-                                      (assoc acc param v)))
-                                  {}
-                                  params)
-        content-type (content-type-from-version (:version opts))
-        cleaned-opts (dissoc opts :accept :query-params :content-type :version)]
-    (api-action :GET
-                "/v1/People/Search"
-                (merge {:accept :xml
-                        :query-params normalized-params
-                        :content-type content-type}
-                       cleaned-opts))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Delete operations
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn delete-household-address
-  "Deletes the attribute with attribute-id for household with household-id."
-  [household-id address-id & opts]
-  (api-action :DELETE
-              (str "/v1/Households/" household-id "/Addresses/" address-id)
-              {:accept :xml}))
-
-(defn delete-person-address
-  "Deletes the attribute with attribute-id for person with person-id."
-  [person-id address-id & opts]
-  (api-action :DELETE
-              (str "/v1/People/" person-id "/Addresses/" address-id)
-              {:accept :xml}))
-
-(defn delete-person-attribute
-  "Deletes the attribute with attribute-id for person with person-id."
-  [person-id attribute-id & opts]
-  (api-action :DELETE
-              (str "/v1/People/" person-id "/Attributes/" attribute-id)
-              {:accept :xml}))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Experimental
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defn api-search
   [args]
   (println args)
@@ -420,47 +120,30 @@
                       (str/replace acc (re-pattern (str k)) (str v))) uri ids))
     uri))
 
-(defn- make-request
-  "Matches the action to the corresponding endpoint and makes the API call.
-  Used as a helper for the macro defendpoint."
-  [action uri opts]
-  (case action ;; opts is showing up as opts16169, a gensym
-    :new    (cond
-              (= 2 (count opts)) (api-action :GET (compile-uri uri (first opts)) (merge {:accept :xml} (last opts)))
-              (= 1 (count opts)) (api-action :GET (compile-uri uri (first opts)) {:accept :xml})
-              (= 0 (count opts)) (api-action :GET uri {:accept :xml}))
-    :delete (do (api-action :DELETE uri))
-    :list   (do (api-action :GET uri {:accept :xml}))
-    :show   (do (api-action :GET uri {:accept :xml}))
-    :edit   (do (api-action :GET uri {:accept :xml}))
-    :search (do (api-search {:uri uri :params (first opts)}))
-    :update (do (api-action :PUT uri {:accept :xml}))
-    :create (do (api-action :POST uri {:accept :xml}))))
-
-(defn- action-uri-clauses
-  "Accepts a map where the keys are the actions and the values are the uris
-  associated with the corresponding key.
-  Used as a helper for the macro defendpoint."
-  [action-uris & opts]
-  (let [action-uri-map (reduce (fn [acc [k v]]
-                                 (assoc acc k v))
-                               {}
-                               (partition-all 2 action-uris))
-        actions (keys action-uri-map)]
-    (interleave actions (map (fn [[action uri]]
-                               (make-request action uri opts))
-                             action-uri-map))))
-
-;; try it out with multimethods instead of the case statement
+(defn build-uri
+  [uri params]
+  (if-let [tokens (re-seq #"\:[A-Za-z\-]+" uri)]
+    
+    )
+  )
 
 (defmacro defendpoint
-  [nm & action-uris]
+  "Defines an endpoint function"
+  [nm & spec]
   `(defn ~nm
      [action# & opts#]
-     (let [clauses# (action-uri-clauses ~action-uris opts#)]
-       (case action#
-         clauses#
-         (str "The " action# " action is not supported.")))))
+     (let [action->uri# ~(apply hash-map spec)
+           http-method# (case action#
+                          :new    :GET
+                          :create :POST
+                          :list   :GET
+                          :update :PUT
+                          :delete :DELETE
+                          :show   :GET
+                          :search :GET
+                          :edit   :GET
+                          (throw (Exception. (str "Unsupported action: " action#))))]
+       (api-action http-method# (action->uri# action#) {:accept :xml}))))
 
 (defendpoint households
   :new    "/v1/Households/new"
