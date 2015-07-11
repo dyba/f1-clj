@@ -2,6 +2,8 @@
 
 Fellowship One API client for Clojure
 
+[![Clojars Project](http://clojars.org/com.danieldyba/fellowship-one/latest-version.svg)](http://clojars.org/com.danieldyba/fellowship-one)
+
 ## Getting Started
 
 Download and install [Leiningen](http://leiningen.org/). On a mac, use [Homebrew](http://brew.sh/) to download and install Leiningen.
@@ -37,8 +39,6 @@ Start up a REPL session. Here's a sample usage of the code:
 ``` clojure
     (ns f1-testdrive.core
       (:require [com.danieldyba.fellowship-one.core :refer :all]
-                [com.danieldyba.fellowship-one.contribution-receipts :as cr]
-                [com.danieldyba.fellowship-one.contribution-types :as ct]
                 [com.danieldyba.fellowship-one.xml.elements :as xe]))
                 
     (def consumer ...)
@@ -48,9 +48,9 @@ Start up a REPL session. Here's a sample usage of the code:
     (with-oauth consumer
                 oauth-token
                 oauth-token-secret
-      (cr/new-receipt)
-      (ct/list-types)
-      (cr/search-receipts {:start-received-date "12-25-2014"}))
+      (new-receipt)
+      (list-contribution-types)
+      (search-receipts {:start-received-date "12-25-2014"}))
     (with-oauth consumer
                 oauth-token
                 oauth-token-secret
@@ -58,12 +58,12 @@ Start up a REPL session. Here's a sample usage of the code:
             received-date (xe/received-date "2014-12-31T12:00:00")
             contribution-type (xe/contribution-type 2)
             fund (xe/fund 220811)
-            receipt-payload (cr/make-receipt-template
+            receipt-payload (make-receipt-template
                               {:amount amount
                                :contribution-type contribution-type
                                :fund fund
                                :received-date received-date})]
-        (cr/create-receipt (xe/to-xml receipt-payload))))
+        (create-receipt (xe/to-xml receipt-payload))))
 ```
 
 The FellowshipOne servers provide XML and JSON responses albeit the JSON responses are non-standard and require a JSON parser that preserves the order of the keys. This is why we've chosen to only support parsing responses containing XML data.

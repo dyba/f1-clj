@@ -1,4 +1,4 @@
-(defproject com.danieldyba/fellowship-one "0.0.2"
+(defproject com.danieldyba/fellowship-one "0.0.3-SNAPSHOT"
   :description "An API wrapper for Fellowship One"
   :url "https://github.com/dyba/fellowship-one"
   :license {:name "Eclipse Public License"
@@ -13,5 +13,6 @@
                  [pandect "0.3.4"]
                  [environ "1.0.0"]
                  [ring/ring-core "1.3.1"]]
+  :deploy-repositories [["releases" :clojars]]
   :profiles {:dev {:dependencies [[midje "1.6.3"]]
                    :plugins [[lein-midje "3.1.3"]]}})
