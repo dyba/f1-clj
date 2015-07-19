@@ -3,8 +3,7 @@
             [clj-time.core :as t]
             [clojure.xml :as xml]
             [clojure.data.zip.xml :as zx]
-            [com.danieldyba.fellowship-one.contribution-types :refer [show-type]]
-            [com.danieldyba.fellowship-one.funds :refer [show-fund]]
+            [com.danieldyba.fellowship-one.core :refer [show-fund show-contribution-type]]
             [clojure.zip :as zip]))
 
 (defn to-xml
@@ -34,7 +33,7 @@
 
 (defn contribution-type
   [id]
-  (zip/node (xml-root (show-type id))))
+  (zip/node (xml-root (show-contribution-type id))))
 
 (defn fund
   [id]
